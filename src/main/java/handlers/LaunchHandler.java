@@ -19,7 +19,6 @@ public class LaunchHandler implements LaunchRequestHandler {
         final String speechText = "Ask me Anything!";
         return handlerInput.getResponseBuilder()
                            .withSpeech(speechText)
-                           .withSimpleCard("Hi, I am Ultron!", speechText)
                            .withReprompt(speechText)
                            .build();
     }

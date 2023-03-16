@@ -1,0 +1,50 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "conversational learning",
+      "modelConfiguration": {
+        "fallbackIntentSensitivity": {
+          "level": "HIGH"
+        }
+      },
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "HelloWorldIntent",
+          "slots": [
+            {
+              "name": "userQuestion",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "Hey Genius {userQuestion}",
+            "Hey Mom {userQuestion}",
+            "Hey Dad {userQuestion}",
+            "Hey parent {userQuestion}"
+          ]
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        }
+      ],
+      "types": []
+    }
+  }
+}

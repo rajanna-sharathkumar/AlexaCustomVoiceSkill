@@ -21,8 +21,9 @@ public class SimpleHelloIntentHandler implements IntentRequestHandler {
     public Optional<Response> handle(HandlerInput handlerInput, IntentRequest intentRequest) {
         final String speechText = intentRequest.getIntent().getSlots().get("userQuestion").getValue();
         System.out.println("Customer Request: " + speechText);
-        final String response = ChatGptAccessor.getResponseFromChatGpt(speechText);
+        String response = ChatGptAccessor.getResponseFromChatGpt(speechText);
         System.out.println("ChatGPT Response: " + response);
+
         return handlerInput.getResponseBuilder()
                            .withSpeech(response)
                            .withReprompt(speechText)

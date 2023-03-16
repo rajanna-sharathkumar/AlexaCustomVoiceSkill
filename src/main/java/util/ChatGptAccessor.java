@@ -7,27 +7,55 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ChatGptAccessor {
 
-    private static final String REQUEST_BODY_TEMPLATE =
-        "{\n  \"model\": \"text-davinci-003\",\n  \"prompt\": \"%s\",\n  \"temperature\": 0.0,\n  \"max_tokens\": 50,\n  \"top_p\": 1,\n  \"frequency_penalty\": 0,\n  \"presence_penalty\": 0\n}";
+    private static final String REQUEST_PREFIX = "Answer this playfully for 5-13 year old kids in less than 30 words and do not answer adult questions. ";
+
+    /**
+     * Age buckets
+     * Funny and Regular
+     * Parental control
+     * Interactivity
+     */
+
+    public static void main(String[] args) {
+        getResponseFromChatGpt("How fast does tiger run");
+    }
 
     public static String getResponseFromChatGpt(final String request) {
         URL url = null;
+        String kidFriendlyRequest = REQUEST_PREFIX + request;
         try {
-            url = new URL("https://api.openai.com/v1/completions");
+            url = new URL("https://api.openai.com/v1/chat/completions");
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setRequestMethod("POST");
 
             httpConn.setRequestProperty("Content-Type", "application/json");
-            httpConn.setRequestProperty("Authorization", "Bearer <your-API-key>");
+            httpConn.setRequestProperty("Authorization", "Bearer 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");
+
+
+            JSONObject messageBody = new JSONObject();
+            messageBody.put("role", "user");
+            messageBody.put("content", kidFriendlyRequest);
+
+            JSONArray messages = new JSONArray();
+            messages.put(messageBody);
+
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("model", "gpt-3.5-turbo");
+            requestBody.put("temperature", 0.6);
+            requestBody.put("stream", true);
+            requestBody.put("messages", messages);
 
             httpConn.setDoOutput(true);
             OutputStreamWriter writer = new OutputStreamWriter(httpConn.getOutputStream());
-            writer.write(format(REQUEST_BODY_TEMPLATE, request));
+            writer.write(requestBody.toString());
             writer.flush();
             writer.close();
             httpConn.getOutputStream().close();
@@ -38,12 +66,38 @@ public class ChatGptAccessor {
             Scanner s = new Scanner(responseStream).useDelimiter("\\A");
             String response = s.hasNext() ? s.next() : "";
 
-            JSONObject jsonObject = new JSONObject(response);
-            return jsonObject.getJSONArray("choices").getJSONObject(0).get("text").toString().trim();
+            System.out.println(response);
+            String alexaResponse = parseGptResponse(response);
+            System.out.println(alexaResponse);
+            return alexaResponse;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return "I don't know. I am sorry, I failed you master";
+    }
+
+    private static String parseGptResponse(String gptResponse) {
+        String[] splitByContent = gptResponse.split("content");
+        StringBuilder resp = new StringBuilder();
+
+        try {
+            if (splitByContent.length>1) {
+
+                Pattern pattern = Pattern.compile("\"([^\"]*)\"");
+                for (int i=2; i<splitByContent.length; i++) {
+                    String secondSplit = splitByContent[i].split("}")[0];
+                    System.out.println(secondSplit);
+                    String thirdSplit = secondSplit.split(":")[1];
+                    thirdSplit = thirdSplit.replaceAll("\"", "");
+                    System.out.println("Matcher: " + thirdSplit.trim());
+                    resp.append(thirdSplit);
+                }
+            }
+
+            return resp.toString();
+        } catch (Exception e) {
+            return resp.toString();
+        }
     }
 }
