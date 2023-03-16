@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +27,7 @@ public class ChatGptAccessor {
      */
 
     public static void main(String[] args) {
-        getResponseFromChatGpt("How fast does tiger run");
+        getResponseFromChatGpt("Rhinos");
     }
 
     public static String getResponseFromChatGpt(final String request) {
@@ -37,15 +39,22 @@ public class ChatGptAccessor {
             httpConn.setRequestMethod("POST");
 
             httpConn.setRequestProperty("Content-Type", "application/json");
-            httpConn.setRequestProperty("Authorization", "Bearer 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");
+            httpConn.setRequestProperty("Authorization", "Bearer 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");
 
 
             JSONObject messageBody = new JSONObject();
             messageBody.put("role", "user");
             messageBody.put("content", kidFriendlyRequest);
 
-            JSONArray messages = new JSONArray();
-            messages.put(messageBody);
+            JSONObject messageBody1 = new JSONObject();
+            messageBody1.put("role", "assistant");
+            messageBody1.put("content", "Which Animal do you like to know about?");
+
+            List<JSONObject> messages = new ArrayList<>();
+            messages.add(messageBody);
+            messages.add(messageBody1);
+
+            System.out.println(messages);
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("model", "gpt-3.5-turbo");
@@ -83,7 +92,6 @@ public class ChatGptAccessor {
 
         try {
             if (splitByContent.length>1) {
-
                 Pattern pattern = Pattern.compile("\"([^\"]*)\"");
                 for (int i=2; i<splitByContent.length; i++) {
                     String secondSplit = splitByContent[i].split("}")[0];
