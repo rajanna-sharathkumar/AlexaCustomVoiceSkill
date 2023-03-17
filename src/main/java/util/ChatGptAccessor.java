@@ -59,7 +59,7 @@ public class ChatGptAccessor {
 //        context.add(context4);
 
 
-        getResponseFromChatGpt("what is dog.", context);
+        getResponseFromChatGpt("tell me something about American cat.", context);
 
     }
 
@@ -141,8 +141,8 @@ public class ChatGptAccessor {
                     System.out.println(secondSplit);
                     String thirdSplit = secondSplit.split(":")[1];
                     thirdSplit = thirdSplit.replaceAll("\"", "");
-                    thirdSplit = thirdSplit.replaceAll("\n", " ");
-                    thirdSplit = thirdSplit.replaceAll("\\\\", " ");
+                    thirdSplit = thirdSplit.replace("\\n", " ");
+                    thirdSplit = thirdSplit.replace("\\", " ");
                     System.out.println("Matcher: " + thirdSplit.trim());
                     resp.append(thirdSplit);
                 }
