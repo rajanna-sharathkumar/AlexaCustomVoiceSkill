@@ -7,7 +7,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +19,7 @@ import org.json.JSONObject;
 
 public class ChatGptAccessor {
 
-    private static final String REQUEST_PREFIX = "Answer this playfully for 5-13 year old kids in less than 30 words and do not answer adult questions. ";
+    private static final String REQUEST_PREFIX = "Give response that is playful for 5-13 year old kids in less than 30 words and make it funny. Give knowledge or fun fact in less than 30 words. Do not answer adult questions. Ask a follow up question or start a new topic.";
 
     /**
      * Age buckets
@@ -27,32 +29,72 @@ public class ChatGptAccessor {
      */
 
     public static void main(String[] args) {
-        getResponseFromChatGpt("Rhinos");
+        List<Map<String, String>> context = new ArrayList<>();
+        Map<String, String> context0 = new HashMap<>();
+        Map<String, String> context1 = new HashMap<>();
+        Map<String, String> context2 = new HashMap<>();
+        Map<String, String> context3 = new HashMap<>();
+        Map<String, String> context4 = new HashMap<>();
+
+        context0.put("role", "system");
+        context0.put("content", "Give response that is playful for 5-13 year old kids in less than 30 words and do not answer adult questions. ");
+
+        context1.put("role", "user");
+        context1.put("content", "what is cat");
+
+        context2.put("role", "assistant");
+        context2.put("content", "A furry friend with whiskers, paws, and a love for naps and chasing toys. Meow! Do "
+                + "you want to learn something new?");
+//
+//        context3.put("role", "user");
+//        context3.put("content", "yes");
+//
+//        context4.put("role", "assistant");
+//        context4.put("content", "Sure thing! What's your favorite color?");
+
+//        context.add(context0);
+        context.add(context1);
+        context.add(context2);
+//        context.add(context3);
+//        context.add(context4);
+
+
+        getResponseFromChatGpt("what is dog.", context);
+
     }
 
-    public static String getResponseFromChatGpt(final String request) {
+    public static String getResponseFromChatGpt(final String request, final List<Map<String, String>>  context) {
         URL url = null;
-        String kidFriendlyRequest = REQUEST_PREFIX + request;
+        String kidFriendlyRequest = request ;
         try {
             url = new URL("https://api.openai.com/v1/chat/completions");
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setRequestMethod("POST");
 
             httpConn.setRequestProperty("Content-Type", "application/json");
-            httpConn.setRequestProperty("Authorization", "Bearer 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");
+            httpConn.setRequestProperty("Authorization", "Bearer XXX");
 
+
+            JSONObject messageStarter = new JSONObject();
+            messageStarter.put("role", "system");
+            messageStarter.put("content", REQUEST_PREFIX);
 
             JSONObject messageBody = new JSONObject();
             messageBody.put("role", "user");
             messageBody.put("content", kidFriendlyRequest);
 
-            JSONObject messageBody1 = new JSONObject();
-            messageBody1.put("role", "assistant");
-            messageBody1.put("content", "Which Animal do you like to know about?");
-
             List<JSONObject> messages = new ArrayList<>();
+
+            messages.add(messageStarter);
+
+            for(Map<String, String> record : context){
+                JSONObject messageBody1 = new JSONObject();
+                messageBody1.put("role", record.get("role"));
+                messageBody1.put("content", record.get("content"));
+                messages.add(messageBody1);
+            }
+
             messages.add(messageBody);
-            messages.add(messageBody1);
 
             System.out.println(messages);
 
@@ -93,11 +135,14 @@ public class ChatGptAccessor {
         try {
             if (splitByContent.length>1) {
                 Pattern pattern = Pattern.compile("\"([^\"]*)\"");
-                for (int i=2; i<splitByContent.length; i++) {
+                for (int i=1; i<splitByContent.length; i++) {
+                    System.out.println("......");
                     String secondSplit = splitByContent[i].split("}")[0];
                     System.out.println(secondSplit);
                     String thirdSplit = secondSplit.split(":")[1];
                     thirdSplit = thirdSplit.replaceAll("\"", "");
+                    thirdSplit = thirdSplit.replaceAll("\n", " ");
+                    thirdSplit = thirdSplit.replaceAll("\\\\", " ");
                     System.out.println("Matcher: " + thirdSplit.trim());
                     resp.append(thirdSplit);
                 }
