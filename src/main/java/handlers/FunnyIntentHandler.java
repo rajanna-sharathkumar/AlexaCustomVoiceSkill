@@ -16,19 +16,18 @@ import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.dispatcher.request.handler.impl.IntentRequestHandler;
 import com.amazon.ask.model.IntentRequest;
 import com.amazon.ask.model.Response;
-import com.amazon.ask.model.services.Pair;
 
 import util.ChatGptAccessor;
 
-public class SimpleHelloIntentHandler implements IntentRequestHandler {
-    private static Logger LOG = getLogger(SimpleHelloIntentHandler.class);
-    private static final String REQUEST_PREFIX = "Give response that is playful for 5 year old kids in less than 30 words. "
+public class FunnyIntentHandler implements IntentRequestHandler {
+    private static Logger LOG = getLogger(FunnyIntentHandler.class);
+    private static final String REQUEST_PREFIX = "Give response that is playful for 5 year old kid in less than 30 words and make it funny. "
         + "Give knowledge or fun fact in less than 30 words. Do not answer adult questions. Ask a follow up question or start a new topic.";
 
 
     @Override
     public boolean canHandle(HandlerInput handlerInput, IntentRequest intentRequest) {
-        return intentRequest.getIntent().getName().equals("HelloWorldIntent") &&
+        return intentRequest.getIntent().getName().equals("FunnyIntent") &&
             intentRequest.getIntent().getSlots() != null;
     }
 

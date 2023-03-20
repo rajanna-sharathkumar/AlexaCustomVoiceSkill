@@ -1,7 +1,5 @@
 package util;
 
-import static java.lang.String.format;
-
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -11,15 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ChatGptAccessor {
-
-    private static final String REQUEST_PREFIX = "Give response that is playful for 5-13 year old kids in less than 30 words and make it funny. Give knowledge or fun fact in less than 30 words. Do not answer adult questions. Ask a follow up question or start a new topic.";
 
     /**
      * Age buckets
@@ -29,12 +23,15 @@ public class ChatGptAccessor {
      */
 
     public static void main(String[] args) {
+        final String requestPrefix = "Give response that is playful for 5-13 year old kids in less than 30 words and make it funny. "
+            + "Give knowledge or fun fact in less than 30 words. Do not answer adult questions. Ask a follow up question or start a new topic.";
         List<Map<String, String>> context = new ArrayList<>();
         Map<String, String> context0 = new HashMap<>();
         Map<String, String> context1 = new HashMap<>();
         Map<String, String> context2 = new HashMap<>();
         Map<String, String> context3 = new HashMap<>();
         Map<String, String> context4 = new HashMap<>();
+//        Map<String, String> context5 = new HashMap<>();
 
         context0.put("role", "system");
         context0.put("content", "Give response that is playful for 5-13 year old kids in less than 30 words and do not answer adult questions. ");
@@ -45,25 +42,26 @@ public class ChatGptAccessor {
         context2.put("role", "assistant");
         context2.put("content", "A furry friend with whiskers, paws, and a love for naps and chasing toys. Meow! Do "
                 + "you want to learn something new?");
-//
-//        context3.put("role", "user");
-//        context3.put("content", "yes");
-//
-//        context4.put("role", "assistant");
-//        context4.put("content", "Sure thing! What's your favorite color?");
 
-//        context.add(context0);
+        context3.put("role", "user");
+        context3.put("content", "What is Sex?");
+
+        context4.put("role", "assistant");
+        context4.put("content", "Sorry I cannot answer that question");
+
+        context.add(context0);
         context.add(context1);
         context.add(context2);
-//        context.add(context3);
-//        context.add(context4);
+        context.add(context3);
+        context.add(context4);
+//        context.add(context5);
 
-
-        getResponseFromChatGpt("tell me something about American cat.", context);
-
+        getResponseFromChatGpt(requestPrefix, "tell me something about American cat.", context);
     }
 
-    public static String getResponseFromChatGpt(final String request, final List<Map<String, String>>  context) {
+    public static String getResponseFromChatGpt(final String requestPrefix,
+                                                final String request,
+                                                final List<Map<String, String>>  context) {
         URL url = null;
         String kidFriendlyRequest = request ;
         try {
@@ -77,7 +75,7 @@ public class ChatGptAccessor {
 
             JSONObject messageStarter = new JSONObject();
             messageStarter.put("role", "system");
-            messageStarter.put("content", REQUEST_PREFIX);
+            messageStarter.put("content", requestPrefix);
 
             JSONObject messageBody = new JSONObject();
             messageBody.put("role", "user");

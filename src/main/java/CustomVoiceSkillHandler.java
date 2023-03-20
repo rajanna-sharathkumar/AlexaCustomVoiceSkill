@@ -1,13 +1,11 @@
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import com.amazon.ask.Skill;
 import com.amazon.ask.SkillStreamHandler;
 import com.amazon.ask.Skills;
-import com.amazonaws.services.lambda.runtime.Context;
 
 import handlers.CancelIntentHandler;
+import handlers.FunnyIntentHandler;
+import handlers.GeneralIntentHandler;
+import handlers.GenerateReportIntentHandler;
 import handlers.GenericExceptionHandler;
 import handlers.HelpIntentHandler;
 import handlers.LaunchHandler;
@@ -23,7 +21,10 @@ public class CustomVoiceSkillHandler extends SkillStreamHandler {
                          new CancelIntentHandler(),
                          new HelpIntentHandler(),
                          new NoIntentHandler(),
-                         new SimpleHelloIntentHandler()
+                         new SimpleHelloIntentHandler(),
+                         new FunnyIntentHandler(),
+                         new GenerateReportIntentHandler(),
+                         new GeneralIntentHandler()
                      )
                      .addExceptionHandlers(new GenericExceptionHandler())
                      // Add your skill id below
